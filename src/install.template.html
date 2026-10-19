@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Evolve Mobile Bookmarklet</title>
+<style>
+    :root { --bg:#fafafa; --fg:#1d1d1f; --muted:#5b5b60; --card:#fff; --line:#d8d8dc; --accent:#2f6fed; }
+    @media (prefers-color-scheme: dark) {
+        :root { --bg:#1b1b1d; --fg:#ececee; --muted:#a0a0a8; --card:#262629; --line:#3a3a3f; --accent:#7aa2ff; }
+    }
+    * { box-sizing: border-box; }
+    body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+    main { max-width: 40rem; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+    h1 { font-size: 1.5rem; margin: 0 0 .25rem; }
+    h2 { font-size: 1.1rem; margin: 2rem 0 .5rem; }
+    p, li { color: var(--muted); }
+    .card { background:var(--card); border:1px solid var(--line); border-radius:.75rem; padding:1rem; margin-top:1rem; }
+    a.bm { display:inline-block; padding:.7rem 1.1rem; border-radius:.6rem; background:var(--accent); color:#fff; font-weight:600; text-decoration:none; cursor:grab; }
+    button { font:inherit; padding:.6rem 1rem; border-radius:.6rem; border:1px solid var(--line); background:var(--card); color:var(--fg); cursor:pointer; }
+    textarea { width:100%; height:6rem; margin-top:.75rem; font:.75rem/1.3 ui-monospace,monospace; background:var(--bg); color:var(--fg); border:1px solid var(--line); border-radius:.5rem; padding:.5rem; }
+    ol { padding-left: 1.25rem; }
+    code { background:var(--bg); border:1px solid var(--line); border-radius:.25rem; padding:0 .25rem; }
+</style>
+</head>
+<body>
+<main>
+    <h1>Evolve mobile UI</h1>
+    <p>A bookmarklet that turns <a href="https://pmotschmann.github.io/Evolve/" style="color:var(--accent)">Evolve</a> into a phone-friendly layout: a bottom bar switches between <b>Game</b>, <b>Resources</b> and <b>Log</b> panels, tabs scroll sideways, and buttons are laid out in a tap-friendly grid.</p>
+
+    <div class="card">
+        <p style="margin-top:0">On a computer, drag this to your bookmarks bar:</p>
+        <a class="bm" href="{{BOOKMARKLET}}">Evolve Mobile</a>
+    </div>
+
+    <h2>Install on a phone</h2>
+    <ol>
+        <li>Tap <b>Copy bookmarklet</b> below.</li>
+        <li>Bookmark any page in your mobile browser (Chrome: &#8942; &rarr; &#9734;; Safari: Share &rarr; Add Bookmark).</li>
+        <li>Edit that bookmark: rename it <code>Evolve Mobile</code> and paste the copied text into the URL / address field.</li>
+    </ol>
+    <button id="copy" type="button">Copy bookmarklet</button>
+    <textarea id="code" readonly spellcheck="false">{{BOOKMARKLET}}</textarea>
+
+    <h2>Use it</h2>
+    <ol>
+        <li>Open Evolve and wait for it to load.</li>
+        <li>Run the bookmarklet (Chrome Android: type <code>Evolve Mobile</code> in the address bar and pick the bookmark; Safari: Bookmarks &rarr; Evolve Mobile).</li>
+        <li>Tap <b>Desktop</b> in the bottom bar, or run it again, to go back to the normal layout.</li>
+    </ol>
+    <p>Run it again after reloading the page &mdash; bookmarklets only last until the page is reloaded.</p>
+</main>
+<script>
+    document.getElementById('copy').addEventListener('click', function () {
+        var ta = document.getElementById('code');
+        var done = function () { document.getElementById('copy').textContent = 'Copied!'; };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(ta.value).then(done, function () { ta.select(); document.execCommand('copy'); done(); });
+        } else { ta.select(); document.execCommand('copy'); done(); }
+    });
+</script>
+</body>
+</html>
