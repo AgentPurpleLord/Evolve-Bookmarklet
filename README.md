@@ -13,15 +13,21 @@ Tooltips and dialogs are constrained to the screen width. The game's own DOM is 
 
 ## Install
 
-Open `index.html` (or the hosted copy, if you publish this repo with GitHub Pages) and follow the instructions: drag the link to your bookmarks bar, or on a phone copy the code and paste it into a bookmark's URL field. The same code is in `bookmarklet.txt`.
+Three ways, best first (the install page `index.html` walks through them):
+
+1. **Userscript (recommended, e.g. Firefox for Android).** Install Violentmonkey or Tampermonkey, then open
+   `https://raw.githubusercontent.com/AgentPurpleLord/Evolve-Bookmarklet/main/evolve-mobile.user.js` and confirm the install.
+   It runs automatically whenever you open Evolve on a phone-sized screen and updates itself, so there is no bookmark to maintain.
+2. **Loader bookmarklet.** Saved once, it fetches the latest `src/evolve-mobile.js` (via jsDelivr, which can cache `@main` for up to ~12 hours) each time it is tapped.
+3. **Self-contained bookmarklet** (`bookmarklet.txt`). Works offline but must be re-copied after every update.
 
 ## Use
 
-1. Open the game and let it load.
-2. Run the bookmarklet. Run it again after each page reload.
+1. Open the game and let it load. With the userscript the layout switches on by itself; with a bookmarklet, tap it.
+2. Tap **Desktop** in the bottom bar to go back to the normal layout for that visit.
 
 ## Develop
 
 - `src/evolve-mobile.js`: readable source (CSS and a small amount of JS).
 - `src/install.template.html`: install page template.
-- `npm install && npm run build`: regenerates `bookmarklet.txt` and `index.html`. Commit both.
+- `npm install && npm run build`: regenerates `bookmarklet.txt`, `evolve-mobile.user.js` (its `@version` is bumped from the git commit count so managers see each update) and `index.html`. Commit all three.

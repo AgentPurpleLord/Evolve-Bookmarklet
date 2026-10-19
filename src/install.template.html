@@ -28,27 +28,40 @@
     <h1>Evolve mobile UI</h1>
     <p>A bookmarklet that turns <a href="https://pmotschmann.github.io/Evolve/" style="color:var(--accent)">Evolve</a> into a phone-friendly layout: a bottom bar switches between <b>Game</b>, <b>Resources</b> and <b>Log</b> panels, tabs scroll sideways, and buttons are laid out in a tap-friendly grid.</p>
 
+    <h2>Recommended: userscript (Firefox / Chrome, auto-runs and auto-updates)</h2>
+    <p>No bookmark needed. A userscript manager runs the mobile layout every time you open Evolve and keeps itself up to date.</p>
+    <ol>
+        <li>Install <b>Violentmonkey</b> (or Tampermonkey) &mdash; Firefox Android: menu &rarr; <b>Add-ons</b> &rarr; search &ldquo;Violentmonkey&rdquo; &rarr; <b>+</b>.</li>
+        <li>Open the script link below and confirm <b>Install</b>.</li>
+        <li>Open <a href="https://pmotschmann.github.io/Evolve/" style="color:var(--accent)">Evolve</a> as usual (a normal bookmark or home-screen shortcut works). The mobile layout switches on by itself on phone-sized screens.</li>
+    </ol>
     <div class="card">
-        <p style="margin-top:0">On a computer, drag this to your bookmarks bar:</p>
-        <a class="bm" href="{{BOOKMARKLET}}">Evolve Mobile</a>
+        <a class="bm" href="{{USERSCRIPT_URL}}">Install userscript</a>
+        <p style="margin-bottom:0">Updates: the manager checks for new versions on its own schedule (Violentmonkey: Settings &rarr; update interval; you can also tap <i>Check for updates</i>).</p>
     </div>
 
-    <h2>Install on a phone</h2>
-    <ol>
-        <li>Tap <b>Copy bookmarklet</b> below.</li>
-        <li>Bookmark any page in your mobile browser (Chrome: &#8942; &rarr; &#9734;; Safari: Share &rarr; Add Bookmark).</li>
-        <li>Edit that bookmark: rename it <code>Evolve Mobile</code> and paste the copied text into the URL / address field.</li>
-    </ol>
-    <button id="copy" type="button">Copy bookmarklet</button>
-    <textarea id="code" readonly spellcheck="false">{{BOOKMARKLET}}</textarea>
+    <h2>No extensions: bookmarklet</h2>
+    <p>If you can't use an extension, this <b>loader</b> bookmarklet only needs to be saved once &mdash; it fetches the newest code each time you tap it, so it never goes stale. You still need to tap it after each page load.</p>
+    <div class="card">
+        <p style="margin-top:0">On a computer, drag this to your bookmarks bar:</p>
+        <a class="bm" href="{{LOADER}}">Evolve Mobile</a>
+    </div>
+    <p>On a phone: tap <b>Copy loader</b>, bookmark any page, edit the bookmark and paste the text into its URL field.</p>
+    <button id="copy" type="button">Copy loader</button>
+    <textarea id="code" readonly spellcheck="false">{{LOADER}}</textarea>
+
+    <details style="margin-top:1rem">
+        <summary>Self-contained bookmarklet (works offline, but must be re-copied after each update)</summary>
+        <div class="card"><a class="bm" href="{{BOOKMARKLET}}">Evolve Mobile (fixed)</a></div>
+        <textarea readonly spellcheck="false">{{BOOKMARKLET}}</textarea>
+    </details>
 
     <h2>Use it</h2>
     <ol>
-        <li>Open Evolve and wait for it to load.</li>
-        <li>Run the bookmarklet (Chrome Android: type <code>Evolve Mobile</code> in the address bar and pick the bookmark; Safari: Bookmarks &rarr; Evolve Mobile).</li>
-        <li>Tap <b>Desktop</b> in the bottom bar, or run it again, to go back to the normal layout.</li>
+        <li>Open Evolve and wait for it to load (the userscript does the rest; with a bookmarklet, tap it now).</li>
+        <li>Switch between <b>Game</b>, <b>Resources</b> and <b>Log</b> with the bottom bar.</li>
+        <li>Tap <b>Desktop</b> in the bar to go back to the normal layout for this visit.</li>
     </ol>
-    <p>Run it again after reloading the page &mdash; bookmarklets only last until the page is reloaded.</p>
 </main>
 <script>
     document.getElementById('copy').addEventListener('click', function () {
