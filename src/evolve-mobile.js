@@ -93,10 +93,22 @@
         'html.evm #mainColumn .button,html.evm #mainColumn .input,html.evm #mainColumn select{min-height:2.25rem}',
 
         /* Market, storage and other rows are laid out with fixed desktop margins/widths: let them wrap. */
-        'html.evm #mainColumn .market-item{flex-wrap:wrap;margin-left:0!important;row-gap:.15rem}',
+        'html.evm #mainColumn .market-item{flex-wrap:wrap;margin-left:0!important;row-gap:.15rem;padding:.4rem 0;border-bottom:1px solid rgba(128,128,128,.22)}',
         'html.evm #mainColumn .market-item .res{width:7.5rem}',
         'html.evm #mainColumn .market-item .trade{min-width:0;margin-left:.5rem}',
         'html.evm #mainColumn .market-item .crtTotal,html.evm #mainColumn .market-item .cntTotal,html.evm #mainColumn .market-item .tradeTotal,html.evm #mainColumn .market-item .tradeTotal.nt{margin-left:0!important}',
+        /* Market resource rows: name + buy/sell on one line, trade-route controls on a full-width line below. */
+        'html.evm #mainColumn .market-item[id^="market-"]{display:grid;grid-template-columns:minmax(4.5rem,1.2fr) auto 1fr auto 1fr;align-items:center;gap:.35rem .4rem}',
+        'html.evm #mainColumn .market-item[id^="market-"] .res{width:auto;margin:0}',
+        'html.evm #mainColumn .market-item[id^="market-"] .buy,html.evm #mainColumn .market-item[id^="market-"] .sell{margin:0}',
+        'html.evm #mainColumn .market-item[id^="market-"] .order{min-width:0;min-height:2rem;display:flex;align-items:center;justify-content:center;box-sizing:border-box}',
+        'html.evm #mainColumn .market-item[id^="market-"] .trade{grid-column:1/-1;display:flex;align-items:center;gap:.5rem;margin:0;padding-top:.15rem}',
+        'html.evm #mainColumn .market-item .trade .sub,html.evm #mainColumn .market-item .trade .add{display:inline-block;min-width:2.5rem;padding:.3rem .6rem!important;line-height:1.2rem!important;text-align:center;top:0!important;border:1px solid rgba(128,128,128,.55);border-radius:.3rem;font-size:1.1rem}',
+        'html.evm #mainColumn .market-item .trade .current{width:3.25rem;text-align:center}',
+        'html.evm #mainColumn .market-item .trade .zero{margin-left:auto;padding:.4rem .25rem}',
+        /* Other market-style panels (ejector, supply, alchemy, galactic trade): keep controls tappable. */
+        'html.evm #mainColumn .market-item .res{margin-right:.5rem}',
+        'html.evm #mainColumn #market-qty{margin-bottom:.5rem}',
         'html.evm #mainColumn .storage-header .crate,html.evm #mainColumn .storage-header .container{margin-left:0!important;margin-right:.5rem;display:inline-block}',
         'html.evm #mainColumn .storage-header{display:flex;flex-wrap:wrap;gap:.25rem .5rem}',
         'html.evm #mainColumn .market-item,html.evm #mainColumn .market-item>*{max-width:100%}',
