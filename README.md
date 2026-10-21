@@ -4,10 +4,11 @@ A bookmarklet that gives [Evolve](https://pmotschmann.github.io/Evolve/) a mobil
 
 The desktop layout's three columns (resources + message log, game tabs, build queue) become full-screen panels, switched with a bottom bar:
 
-- **Game**: the tab strip scrolls sideways; action buttons form a 2/3/4-column tap-friendly grid.
+- **Game**: the morale / power (MW) header and the building queue stay pinned on top; the tab strip scrolls sideways; action buttons form a 2/3/4-column tap-friendly grid.
 - **Resources**: the resource list at full width.
 - **Log**: message log and build queue, full height.
-- **Desktop**: switches back to the original layout (running the bookmarklet again does the same).
+
+New log messages also pop up briefly as toasts above the bottom bar (tap one to dismiss it; up to 3 at a time, none while the Log panel is open).
 
 Tooltips and dialogs are constrained to the screen width. The game's own DOM is never moved, only restyled, so it keeps working normally.
 
@@ -24,7 +25,7 @@ Three ways, best first (the install page `index.html` walks through them):
 ## Use
 
 1. Open the game and let it load. With the userscript the layout switches on by itself; with a bookmarklet, tap it.
-2. Tap **Desktop** in the bottom bar to go back to the normal layout for that visit.
+2. To go back to the normal layout for that visit, run the bookmarklet a second time (or turn the userscript off in your manager).
 
 ## Develop
 

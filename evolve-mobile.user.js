@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Evolve Mobile UI
 // @namespace    https://github.com/AgentPurpleLord/Evolve-Bookmarklet
-// @version      1.0.0.4
+// @version      1.0.0.6
 // @description  Mobile-friendly layout for Evolve (Game / Resources / Log panels, scrollable tabs).
 // @match        https://pmotschmann.github.io/Evolve/*
 // @match        https://pmotschmann.github.io/Evolve
@@ -74,6 +74,19 @@
 
                 /* Which panel is visible. */
                 'html.evm.evm-game #mainColumn{display:block!important;overflow-x:auto!important}',
+                /* Game panel: keep the race / morale / power (MW) header pinned above the tabs, as the desktop sidebar does. */
+                'html.evm.evm-game .main>.columns{display:flex!important;flex-direction:column}',
+                'html.evm.evm-game .main>.columns>.leftColumn{display:block!important;flex:none;height:auto!important;padding:.25rem .5rem 0!important;overflow:visible}',
+                'html.evm.evm-game .leftColumn #resources,html.evm.evm-game .leftColumn #msgQueue{display:none!important}',
+                /* The build queue sits under the header, above the tabs, so it is visible while building. */
+                'html.evm.evm-game .leftColumn #sideQueue .bldQueue{max-height:6.5rem!important;overflow-y:auto!important;margin:.25rem 0 0!important;font-size:.85rem;padding-bottom:.15rem}',
+                'html.evm.evm-game .main>.columns>.queueCol{display:block!important;flex:none;order:1;height:auto!important;padding:0 .5rem!important;overflow:visible}',
+                'html.evm.evm-game .main>.columns>.queueCol:empty{display:none!important}',
+                'html.evm.evm-game .queueCol div.bldQueue:first-child{margin-top:.25rem!important}',
+                'html.evm.evm-game .queueCol .msgQueue{display:none!important}',
+                'html.evm.evm-game .main>.columns>#mainColumn{order:2}',
+                'html.evm.evm-game .leftColumn .race{margin:0!important}',
+                'html.evm.evm-game .main>.columns>#mainColumn{flex:1 1 auto;min-height:0;height:auto!important}',
                 'html.evm.evm-res .leftColumn,html.evm.evm-log .leftColumn{display:block!important}',
                 'html.evm.evm-log .queueCol{display:block!important}',
                 'html.evm.evm-res #sideQueue{display:none!important}',
@@ -118,7 +131,7 @@
                 '@media (min-width:900px){html.evm #mainColumn .action{width:25%}}',
                 'html.evm #mainColumn table{display:block;max-width:100%;overflow-x:auto}',
                 'html.evm #mainColumn img,html.evm #mainColumn canvas,html.evm #mainColumn svg{max-width:100%}',
-                'html.evm #mainColumn .button,html.evm #mainColumn .input,html.evm #mainColumn select{min-height:2.25rem}',
+                'html.evm #mainColumn .button:not(.b-radio):not(.b-checkbox),html.evm #mainColumn .input,html.evm #mainColumn select{min-height:2.25rem}',
 
                 /* Market, storage and other rows are laid out with fixed desktop margins/widths: let them wrap. */
                 'html.evm #mainColumn .market-item{flex-wrap:wrap;margin-left:0!important;row-gap:.15rem;padding:.4rem 0;border-bottom:1px solid rgba(128,128,128,.22)}',
@@ -141,6 +154,16 @@
                 'html.evm #mainColumn .storage-header{display:flex;flex-wrap:wrap;gap:.25rem .5rem}',
                 'html.evm #mainColumn .market-item,html.evm #mainColumn .market-item>*{max-width:100%}',
 
+                /* Fuel / smelting controls are flat runs of  [«] name [»]  spans: keep each triple together, one per row. */
+                'html.evm #mainColumn .fuels{display:grid;grid-template-columns:2.75rem minmax(7rem,11rem) 2.75rem;justify-content:center;gap:.3rem 0;margin-top:.4rem}',
+                'html.evm #mainColumn .fuels .sub,html.evm #mainColumn .fuels .add{display:flex;align-items:center;justify-content:center;margin:0;padding:0;min-height:2rem}',
+                'html.evm #mainColumn .fuels .current{display:block;text-align:center;line-height:2rem;min-width:0;min-height:2rem;font-size:1rem;padding:0 .25rem}',
+                'html.evm #mainColumn .fuels .current.infoOnly{grid-column:1/-1}',
+                /* Governor: crate/container balance rows (name + 0x..4x toggles) in two tidy columns. */
+                'html.evm #mainColumn .govOffice .bal_storage .ccmOption>span{width:5.25rem}',
+                'html.evm #mainColumn .govOffice .options .storage{flex-wrap:wrap;gap:.25rem}',
+                'html.evm #mainColumn .govOffice .options .storage>div{width:calc(50% - .5rem)}',
+
                 /* Tooltips / popups / dialogs must fit the screen. */
                 'html.evm .popper,html.evm .main>div.popper,html.evm body .modal>div.popper{max-width:calc(100vw - 1rem)!important;width:auto;box-sizing:border-box;font-size:.85rem}',
                 'html.evm .modal .modal-card,html.evm .modal .modal-content{box-sizing:border-box;width:calc(100vw - 1rem)!important;min-width:0!important;max-width:calc(100vw - 1rem)!important;margin:0 .5rem;overflow-x:hidden}',
@@ -151,12 +174,17 @@
                 'html.evm .modal .crates button{margin:.2rem .15rem!important}',
                 'html.evm .modal .animation-content{max-width:100vw}',
 
+                /* Message toasts above the bottom nav. */
+                '#evm-toasts{position:fixed;left:.5rem;right:.5rem;bottom:4rem;z-index:30;display:flex;flex-direction:column;align-items:stretch;pointer-events:none}',
+                '#evm-toasts .evm-toast{pointer-events:auto;box-sizing:border-box;margin-top:.35rem;padding:.5rem .75rem;border:1px solid rgba(128,128,128,.45);border-radius:.5rem;background:rgba(20,20,22,.94);box-shadow:0 .15rem .6rem rgba(0,0,0,.5);font-size:.9rem;line-height:1.3;animation:evm-in .2s ease-out;transition:opacity .3s,transform .3s}',
+                '#evm-toasts .evm-toast.evm-out{opacity:0;transform:translateY(.5rem)}',
+                '@keyframes evm-in{from{opacity:0;transform:translateY(.5rem)}to{opacity:1;transform:none}}',
+
                 /* Bottom navigation. */
                 '#evm-nav{display:none}',
                 'html.evm #evm-nav{display:flex;flex:none;border-top:1px solid rgba(128,128,128,.5);background:#2b2b2b;padding-bottom:env(safe-area-inset-bottom);position:relative;z-index:11}',
                 '#evm-nav button{flex:1 1 0;appearance:none;-webkit-appearance:none;background:transparent;border:0;border-bottom:3px solid transparent;color:#cfcfcf;font:inherit;font-size:1rem;padding:.85rem .25rem;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}',
-                '#evm-nav button.on{color:#fff;border-bottom-color:#f1fa8c;background:rgba(255,255,255,.08)}',
-                '#evm-nav button.evm-off{flex:0 0 auto;padding:.85rem .9rem;font-size:.85rem;color:#999}'
+                '#evm-nav button.on{color:#fff;border-bottom-color:#f1fa8c;background:rgba(255,255,255,.08)}'
             ].join('\n');
 
             var html = document.documentElement;
@@ -178,14 +206,6 @@
                 nav.appendChild(b);
                 buttons[v.id] = b;
             });
-            var off = document.createElement('button');
-            off.type = 'button';
-            off.className = 'evm-off';
-            off.textContent = 'Desktop';
-            off.title = 'Switch back to the desktop layout';
-            off.addEventListener('click', function () { api.toggle(); });
-            nav.appendChild(off);
-
             var meta, metaOriginal, metaCreated = false;
             var current = 'game';
             var observer;
@@ -251,6 +271,74 @@
                 }
             }
 
+            /* Message log -> toasts. The game prepends <p class="has-text-COLOR"> to #msgQueueLog for each new message. */
+            var toastBox, logObs, boundLog, muteUntil = 0;
+            var TOAST_MS = 5000, TOAST_MAX = 3;
+
+            function showToast(text, color) {
+                if (!active || current === 'log' || !text) { return; }
+                if (!toastBox || toastBox.parentNode !== document.body) {
+                    toastBox = toastBox || document.createElement('div');
+                    toastBox.id = NS + '-toasts';
+                    toastBox.setAttribute('aria-hidden', 'true'); // the game's own log is already a live region
+                    document.body.appendChild(toastBox);
+                }
+                toastBox.style.bottom = (nav.offsetHeight + 8) + 'px';
+                var last = toastBox.lastChild;
+                if (last && last.getAttribute('data-t') === text) { // same message again: just keep it up longer
+                    clearTimeout(last._timer);
+                    last._timer = setTimeout(function () { dismiss(last); }, TOAST_MS);
+                    return;
+                }
+                var el = document.createElement('div');
+                el.className = NS + '-toast';
+                el.setAttribute('data-t', text);
+                var span = document.createElement('span');
+                span.className = color || 'has-text-warning';
+                span.textContent = text;
+                el.appendChild(span);
+                el.addEventListener('click', function () { dismiss(el); });
+                toastBox.appendChild(el);
+                while (toastBox.children.length > TOAST_MAX) { toastBox.removeChild(toastBox.firstChild); }
+                el._timer = setTimeout(function () { dismiss(el); }, TOAST_MS);
+            }
+
+            function dismiss(el) {
+                clearTimeout(el._timer);
+                el.classList.add(NS + '-out');
+                setTimeout(function () { if (el.parentNode) { el.parentNode.removeChild(el); } }, 320);
+            }
+
+            function onLogChange(muts) {
+                if (!active || Date.now() < muteUntil) { return; }
+                var added = [];
+                muts.forEach(function (m) {
+                    [].forEach.call(m.addedNodes, function (n) { if (n.nodeType === 1 && n.tagName === 'P') { added.push(n); } });
+                });
+                // A filter switch / clear / startup restore re-adds many lines at once: not new messages.
+                if (!added.length || added.length > TOAST_MAX) { return; }
+                added.forEach(function (n) {
+                    var m = /(?:^|\s)(has-text-[a-z-]+)/.exec(n.className || '');
+                    showToast(n.textContent, m ? m[1] : '');
+                });
+            }
+
+            function bindLog() {
+                var log = document.getElementById('msgQueueLog');
+                if (log === boundLog) { return; }
+                if (logObs) { logObs.disconnect(); }
+                boundLog = log;
+                if (log) {
+                    muteUntil = Date.now() + 1500; // the game fills a fresh log with saved messages
+                    logObs = new MutationObserver(onLogChange);
+                    logObs.observe(log, { childList: true });
+                }
+            }
+
+            function muteOnLogControls(e) {
+                if (e.target.closest && e.target.closest('#msgQueue')) { muteUntil = Date.now() + 700; }
+            }
+
             var hintTimer;
 
             var api = window.__evm = {
@@ -269,7 +357,9 @@
                     document.addEventListener('scroll', updateHints, true);
                     document.addEventListener('click', onTabClick, true);
                     window.addEventListener('resize', updateHints);
-                    hintTimer = setInterval(updateHints, 750);
+                    hintTimer = setInterval(function () { updateHints(); bindLog(); }, 750);
+                    document.addEventListener('click', muteOnLogControls, true);
+                    bindLog();
                     updateHints();
                     window.dispatchEvent(new Event('resize'));
                 },
@@ -281,6 +371,10 @@
                     document.removeEventListener('click', onTabClick, true);
                     window.removeEventListener('resize', updateHints);
                     clearInterval(hintTimer);
+                    document.removeEventListener('click', muteOnLogControls, true);
+                    if (logObs) { logObs.disconnect(); }
+                    boundLog = null;
+                    if (toastBox) { toastBox.remove(); }
                     [].forEach.call(document.querySelectorAll('.' + NS + '-more-l,.' + NS + '-more-r'), function (el) {
                         el.classList.remove(NS + '-more-l', NS + '-more-r');
                     });
