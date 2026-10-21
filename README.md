@@ -4,9 +4,11 @@ A bookmarklet that gives [Evolve](https://pmotschmann.github.io/Evolve/) a mobil
 
 The desktop layout's three columns (resources + message log, game tabs, build queue) become full-screen panels, switched with a bottom bar:
 
-- **Game**: the morale / power (MW) header stays pinned on top; the tab strip scrolls sideways; action buttons form a 2/3/4-column tap-friendly grid.
+- **Game**: the morale / power (MW) header and the building queue stay pinned on top; the tab strip scrolls sideways; action buttons form a 2/3/4-column tap-friendly grid.
 - **Resources**: the resource list at full width.
 - **Log**: message log and build queue, full height.
+
+New log messages also pop up briefly as toasts above the bottom bar (tap one to dismiss it; up to 3 at a time, none while the Log panel is open).
 
 Tooltips and dialogs are constrained to the screen width. The game's own DOM is never moved, only restyled, so it keeps working normally.
 
