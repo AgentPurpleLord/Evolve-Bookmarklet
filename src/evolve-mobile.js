@@ -46,6 +46,12 @@
 
         /* Which panel is visible. */
         'html.evm.evm-game #mainColumn{display:block!important;overflow-x:auto!important}',
+        /* Game panel: keep the race / morale / power (MW) header pinned above the tabs, as the desktop sidebar does. */
+        'html.evm.evm-game .main>.columns{display:flex!important;flex-direction:column}',
+        'html.evm.evm-game .main>.columns>.leftColumn{display:block!important;flex:none;height:auto!important;padding:.25rem .5rem 0!important;overflow:visible}',
+        'html.evm.evm-game .leftColumn #sideQueue,html.evm.evm-game .leftColumn #resources{display:none!important}',
+        'html.evm.evm-game .leftColumn .race{margin:0!important}',
+        'html.evm.evm-game .main>.columns>#mainColumn{flex:1 1 auto;min-height:0;height:auto!important}',
         'html.evm.evm-res .leftColumn,html.evm.evm-log .leftColumn{display:block!important}',
         'html.evm.evm-log .queueCol{display:block!important}',
         'html.evm.evm-res #sideQueue{display:none!important}',
@@ -90,7 +96,7 @@
         '@media (min-width:900px){html.evm #mainColumn .action{width:25%}}',
         'html.evm #mainColumn table{display:block;max-width:100%;overflow-x:auto}',
         'html.evm #mainColumn img,html.evm #mainColumn canvas,html.evm #mainColumn svg{max-width:100%}',
-        'html.evm #mainColumn .button,html.evm #mainColumn .input,html.evm #mainColumn select{min-height:2.25rem}',
+        'html.evm #mainColumn .button:not(.b-radio):not(.b-checkbox),html.evm #mainColumn .input,html.evm #mainColumn select{min-height:2.25rem}',
 
         /* Market, storage and other rows are laid out with fixed desktop margins/widths: let them wrap. */
         'html.evm #mainColumn .market-item{flex-wrap:wrap;margin-left:0!important;row-gap:.15rem;padding:.4rem 0;border-bottom:1px solid rgba(128,128,128,.22)}',
@@ -113,6 +119,16 @@
         'html.evm #mainColumn .storage-header{display:flex;flex-wrap:wrap;gap:.25rem .5rem}',
         'html.evm #mainColumn .market-item,html.evm #mainColumn .market-item>*{max-width:100%}',
 
+        /* Fuel / smelting controls are flat runs of  [«] name [»]  spans: keep each triple together, one per row. */
+        'html.evm #mainColumn .fuels{display:grid;grid-template-columns:2.75rem minmax(7rem,11rem) 2.75rem;justify-content:center;gap:.3rem 0;margin-top:.4rem}',
+        'html.evm #mainColumn .fuels .sub,html.evm #mainColumn .fuels .add{display:flex;align-items:center;justify-content:center;margin:0;padding:0;min-height:2rem}',
+        'html.evm #mainColumn .fuels .current{display:block;text-align:center;line-height:2rem;min-width:0;min-height:2rem;font-size:1rem;padding:0 .25rem}',
+        'html.evm #mainColumn .fuels .current.infoOnly{grid-column:1/-1}',
+        /* Governor: crate/container balance rows (name + 0x..4x toggles) in two tidy columns. */
+        'html.evm #mainColumn .govOffice .bal_storage .ccmOption>span{width:5.25rem}',
+        'html.evm #mainColumn .govOffice .options .storage{flex-wrap:wrap;gap:.25rem}',
+        'html.evm #mainColumn .govOffice .options .storage>div{width:calc(50% - .5rem)}',
+
         /* Tooltips / popups / dialogs must fit the screen. */
         'html.evm .popper,html.evm .main>div.popper,html.evm body .modal>div.popper{max-width:calc(100vw - 1rem)!important;width:auto;box-sizing:border-box;font-size:.85rem}',
         'html.evm .modal .modal-card,html.evm .modal .modal-content{box-sizing:border-box;width:calc(100vw - 1rem)!important;min-width:0!important;max-width:calc(100vw - 1rem)!important;margin:0 .5rem;overflow-x:hidden}',
@@ -127,8 +143,7 @@
         '#evm-nav{display:none}',
         'html.evm #evm-nav{display:flex;flex:none;border-top:1px solid rgba(128,128,128,.5);background:#2b2b2b;padding-bottom:env(safe-area-inset-bottom);position:relative;z-index:11}',
         '#evm-nav button{flex:1 1 0;appearance:none;-webkit-appearance:none;background:transparent;border:0;border-bottom:3px solid transparent;color:#cfcfcf;font:inherit;font-size:1rem;padding:.85rem .25rem;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}',
-        '#evm-nav button.on{color:#fff;border-bottom-color:#f1fa8c;background:rgba(255,255,255,.08)}',
-        '#evm-nav button.evm-off{flex:0 0 auto;padding:.85rem .9rem;font-size:.85rem;color:#999}'
+        '#evm-nav button.on{color:#fff;border-bottom-color:#f1fa8c;background:rgba(255,255,255,.08)}'
     ].join('\n');
 
     var html = document.documentElement;
@@ -150,14 +165,6 @@
         nav.appendChild(b);
         buttons[v.id] = b;
     });
-    var off = document.createElement('button');
-    off.type = 'button';
-    off.className = 'evm-off';
-    off.textContent = 'Desktop';
-    off.title = 'Switch back to the desktop layout';
-    off.addEventListener('click', function () { api.toggle(); });
-    nav.appendChild(off);
-
     var meta, metaOriginal, metaCreated = false;
     var current = 'game';
     var observer;
