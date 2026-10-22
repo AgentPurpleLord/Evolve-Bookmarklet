@@ -131,6 +131,16 @@
         'html.evm #mainColumn .fuels .sub,html.evm #mainColumn .fuels .add{display:flex;align-items:center;justify-content:center;margin:0;padding:0;min-height:2rem}',
         'html.evm #mainColumn .fuels .current{display:block;text-align:center;line-height:2rem;min-width:0;min-height:2rem;font-size:1rem;padding:0 .25rem}',
         'html.evm #mainColumn .fuels .current.infoOnly{grid-column:1/-1}',
+        /* Hell Dimension fortress: Stationed / Patrols / Patrol Size as  label [«] value [»]  rows; training line + observe button. */
+        'html.evm #mainColumn .fort{min-height:0}',
+        'html.evm #mainColumn .fort>div:has(>.armyLabel){display:grid;grid-template-columns:max-content 2.75rem 4.5rem 2.75rem;justify-content:start;align-items:center;gap:.3rem 0}',
+        'html.evm #mainColumn .fort>div:has(>.armyLabel)>span:not(.sub):not(.add):not(.current):not(.hireLabel){padding-right:.6rem}',
+        'html.evm #mainColumn .fort>div:has(>.armyLabel)>.hireLabel,html.evm #mainColumn .fort>div:has(>.armyLabel)>div{grid-column:1/-1}',
+        'html.evm #mainColumn .fort .sub,html.evm #mainColumn .fort .add{display:flex;align-items:center;justify-content:center;margin:0;padding:0;min-height:2rem}',
+        'html.evm #mainColumn .fort .current{display:block;text-align:center;line-height:2rem;min-width:0;min-height:2rem;font-size:1rem;padding:0 .25rem;bottom:0}',
+        'html.evm #mainColumn .fort .training{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem .5rem}',
+        'html.evm #mainColumn .fort .training progress{order:3;display:block;width:100%!important;height:.7rem}',
+        'html.evm #mainColumn .fort .observe{float:none!important;height:auto;line-height:1.2;margin:0 0 0 auto!important;padding:.35rem .6rem;bottom:0}',
         /* Governor: crate/container balance rows (name + 0x..4x toggles) in two tidy columns. */
         'html.evm #mainColumn .govOffice .bal_storage .ccmOption>span{width:5.25rem}',
         'html.evm #mainColumn .govOffice .options .storage{flex-wrap:wrap;gap:.25rem}',
