@@ -126,6 +126,11 @@
         'html.evm #mainColumn .storage-header{display:flex;flex-wrap:wrap;gap:.25rem .5rem}',
         'html.evm #mainColumn .market-item,html.evm #mainColumn .market-item>*{max-width:100%}',
 
+        /* All « » steppers: finger-sized (the factory, quarry slider, jobs, etc.). */
+        'html.evm #mainColumn .sub,html.evm #mainColumn .add{display:inline-flex;align-items:center;justify-content:center;min-width:2.5rem;min-height:2rem;padding:0 .5rem;vertical-align:middle;box-sizing:border-box}',
+        'html.evm #mainColumn .current{display:inline-block;min-height:2rem;line-height:2rem;vertical-align:middle}',
+        'html.evm #mainColumn .factory>div,html.evm #mainColumn .factory>span{margin-bottom:.2rem}',
+
         /* Fuel / smelting controls are flat runs of  [«] name [»]  spans: keep each triple together, one per row. */
         'html.evm #mainColumn .fuels{display:grid;grid-template-columns:2.75rem minmax(7rem,11rem) 2.75rem;justify-content:center;gap:.3rem 0;margin-top:.4rem}',
         'html.evm #mainColumn .fuels .sub,html.evm #mainColumn .fuels .add{display:flex;align-items:center;justify-content:center;margin:0;padding:0;min-height:2rem}',
@@ -162,11 +167,26 @@
         '#evm-toasts .evm-toast.evm-out{opacity:0;transform:translateY(.5rem)}',
         '@keyframes evm-in{from{opacity:0;transform:translateY(.5rem)}to{opacity:1;transform:none}}',
 
+        /* Time (game speed) control in the top bar, with its popup. */
+        'html.evm .topBar .planetWrap{order:0}',
+        'html.evm .topBar .calendar{order:2;flex:1 1 100%!important}',
+        '#evm-speed{order:1;margin-left:auto;appearance:none;-webkit-appearance:none;border:1px solid rgba(255,255,255,.45);border-radius:.4rem;background:rgba(0,0,0,.25);color:inherit;font:inherit;font-size:.85rem;line-height:1.1rem;padding:.1rem .5rem;margin-top:.1rem;margin-bottom:.1rem;cursor:pointer;touch-action:manipulation}',
+        '#evm-speed.fast{background:#f1fa8c;color:#222;border-color:#f1fa8c;font-weight:600}',
+        '#evm-speed-panel{position:fixed;right:.5rem;z-index:35;width:min(20rem,calc(100vw - 1rem));box-sizing:border-box;padding:.75rem;border:1px solid rgba(128,128,128,.5);border-radius:.6rem;background:rgba(20,20,22,.97);color:#eee;box-shadow:0 .25rem 1rem rgba(0,0,0,.6);font-size:.9rem}',
+        '#evm-speed-panel h3{margin:0 0 .5rem;font-size:1rem;color:#f1fa8c}',
+        '#evm-speed-panel .row{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.6rem}',
+        '#evm-speed-panel button,#evm-speed-panel input{font:inherit;font-size:1rem;box-sizing:border-box;border:1px solid rgba(128,128,128,.6);border-radius:.4rem;background:#33343a;color:#eee;padding:.45rem .7rem;min-height:2.4rem}',
+        '#evm-speed-panel button.on{background:#f1fa8c;color:#222;border-color:#f1fa8c;font-weight:600}',
+        '#evm-speed-panel input{width:5.5rem;background:#f4f4ee;color:#222}',
+        '#evm-speed-panel p{margin:.4rem 0 0;color:#aaa;font-size:.8rem;line-height:1.3}',
+
         /* Bottom navigation. */
         '#evm-nav{display:none}',
         'html.evm #evm-nav{display:flex;flex:none;border-top:1px solid rgba(128,128,128,.5);background:#2b2b2b;padding-bottom:env(safe-area-inset-bottom);position:relative;z-index:11}',
         '#evm-nav button{flex:1 1 0;appearance:none;-webkit-appearance:none;background:transparent;border:0;border-bottom:3px solid transparent;color:#cfcfcf;font:inherit;font-size:1rem;padding:.85rem .25rem;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}',
-        '#evm-nav button.on{color:#fff;border-bottom-color:#f1fa8c;background:rgba(255,255,255,.08)}'
+        '#evm-nav button.on{color:#fff;border-bottom-color:#f1fa8c;background:rgba(255,255,255,.08)}',
+        '#evm-nav button.evm-mult{flex:0 0 auto;min-width:4.2rem;color:#aaa;font-size:.95rem}',
+        '#evm-nav button.evm-mult.mult-on{color:#222;background:#f1fa8c;border-bottom-color:#f1fa8c;font-weight:600}'
     ].join('\n');
 
     var html = document.documentElement;
@@ -188,6 +208,13 @@
         nav.appendChild(b);
         buttons[v.id] = b;
     });
+    var multBtn = document.createElement('button');
+    multBtn.type = 'button';
+    multBtn.className = 'evm-mult';
+    multBtn.title = 'Step multiplier for the \u00ab \u00bb and build buttons (like Ctrl / Shift / Alt on a PC)';
+    multBtn.addEventListener('click', function () { cycleMult(); });
+    nav.appendChild(multBtn);
+
     var meta, metaOriginal, metaCreated = false;
     var current = 'game';
     var observer;
@@ -321,6 +348,193 @@
         if (e.target.closest && e.target.closest('#msgQueue')) { muteUntil = Date.now() + 700; }
     }
 
+    /* Step multiplier: the game reads Ctrl / Shift / Alt (x10 / x25 / x100) from keyboard events, so emulate them.
+       The game also clears those flags on every mouse move (which a tap generates), so re-assert them around each tap. */
+    var MULTS = [
+        { label: '\u00d71', keys: [] },
+        { label: '\u00d710', keys: ['Control'] },
+        { label: '\u00d725', keys: ['Shift'] },
+        { label: '\u00d7100', keys: ['Alt'] }
+    ];
+    var multIdx = 0;
+
+    function fireKeys(type) {
+        MULTS[multIdx].keys.forEach(function (k) {
+            document.dispatchEvent(new KeyboardEvent(type, { key: k, bubbles: true, cancelable: true }));
+        });
+    }
+
+    function holdMult() { if (active && multIdx) { fireKeys('keydown'); } }
+
+    function afterTap() { setTimeout(holdMult, 0); }
+
+    function cycleMult() {
+        fireKeys('keyup');
+        multIdx = (multIdx + 1) % MULTS.length;
+        holdMult();
+        renderMult();
+    }
+
+    function renderMult() {
+        multBtn.textContent = MULTS[multIdx].label;
+        multBtn.classList.toggle('mult-on', multIdx > 0);
+    }
+
+    /* Game speed: the game's clock is a Web Worker timer started with { loop: 'start', period } (250ms normally; the game
+       itself halves it for "accelerated time"). Scaling that period scales game time. */
+    var speed = 1, basePeriod = 250, workerRef = null, origPost = null, tickTimes = [], lastTick = null;
+    var speedBtn, speedPanel, speedInput;
+
+    function patchWorker() {
+        if (origPost || !window.Worker || !Worker.prototype.postMessage) { return; }
+        // (1) Intercept the game's (re)starts of its clock so a chosen speed also applies after the game restarts it itself.
+        origPost = Worker.prototype.postMessage;
+        Worker.prototype.postMessage = function (msg) {
+            workerRef = this;
+            if (msg && msg.loop === 'start' && typeof msg.period === 'number') {
+                basePeriod = msg.period;
+                if (speed !== 1) { msg = { loop: msg.loop, period: scaledPeriod() }; }
+            }
+            return origPost.apply(this, [msg].concat([].slice.call(arguments, 1)));
+        };
+        // (2) The clock's ticks arrive as message events whose target is the worker: grab it (and the tick interval) from there.
+        var d = Object.getOwnPropertyDescriptor(MessageEvent.prototype, 'data');
+        if (d && d.get) {
+            Object.defineProperty(MessageEvent.prototype, 'data', {
+                configurable: true,
+                enumerable: d.enumerable,
+                get: function () {
+                    var v = d.get.call(this);
+                    if (v && v.loop === 'main' && this.target instanceof Worker) {
+                        if (!workerRef) { workerRef = this.target; }
+                        if (this !== lastTick) { // a message's data can be read several times (by the game and by other scripts)
+                            lastTick = this;
+                            tickTimes.push(Date.now());
+                            if (tickTimes.length > 12) { tickTimes.shift(); }
+                        }
+                    }
+                    return v;
+                }
+            });
+        }
+    }
+
+    function scaledPeriod() { return Math.max(1, Math.round(basePeriod / speed)); }
+
+    /* Current un-scaled tick length, measured from recent ticks (the game uses 250ms, 125ms in accelerated time, ...). */
+    function measuredPeriod() {
+        if (tickTimes.length < 6) { return basePeriod; }
+        var gaps = [];
+        for (var i = 1; i < tickTimes.length; i++) { gaps.push(tickTimes[i] - tickTimes[i - 1]); }
+        gaps.sort(function (a, b) { return a - b; });
+        var m = gaps[Math.floor(gaps.length / 2)];
+        return (m >= 40 && m <= 1000) ? m : basePeriod; // implausible (e.g. throttled background tab): keep the last known value
+    }
+
+    function gamePaused() {
+        var el = document.getElementById('pausegame');
+        return !!el && el.classList.contains('pause');
+    }
+
+    function applySpeed(tries) {
+        if (gamePaused()) { return; } // the game restarts its clock (through our patch) when it is resumed
+        if (!workerRef) {
+            if (tries > 0) { setTimeout(function () { applySpeed(tries - 1); }, 100); }
+            return;
+        }
+        origPost.call(workerRef, { loop: 'clear' });
+        origPost.call(workerRef, { loop: 'start', period: scaledPeriod() });
+        tickTimes = [];
+    }
+
+    function setSpeed(v) {
+        v = Math.min(100, Math.max(0.25, Number(v) || 1));
+        patchWorker();
+        if (speed === 1) { basePeriod = measuredPeriod(); } // only measurable while the clock is unscaled
+        speed = v;
+        renderSpeed();
+        applySpeed(30);
+    }
+
+    function fmtSpeed(v) { return '\u00d7' + (Math.round(v * 100) / 100); }
+
+    function renderSpeed() {
+        if (!speedBtn) { return; }
+        speedBtn.textContent = '\u23e9 ' + fmtSpeed(speed);
+        speedBtn.classList.toggle('fast', speed !== 1);
+        if (speedPanel) {
+            [].forEach.call(speedPanel.querySelectorAll('button[data-v]'), function (b) {
+                b.classList.toggle('on', Number(b.getAttribute('data-v')) === speed);
+            });
+            if (speedInput && document.activeElement !== speedInput) { speedInput.value = speed; }
+        }
+    }
+
+    function closeSpeedPanel() { if (speedPanel) { speedPanel.remove(); speedPanel = speedInput = null; } }
+
+    function openSpeedPanel() {
+        closeSpeedPanel();
+        speedPanel = document.createElement('div');
+        speedPanel.id = NS + '-speed-panel';
+        var h = document.createElement('h3');
+        h.textContent = 'Game speed';
+        speedPanel.appendChild(h);
+        var row = document.createElement('div');
+        row.className = 'row';
+        [1, 2, 5, 10, 25, 50, 100].forEach(function (v) {
+            var b = document.createElement('button');
+            b.type = 'button';
+            b.textContent = fmtSpeed(v);
+            b.setAttribute('data-v', v);
+            b.addEventListener('click', function () { setSpeed(v); });
+            row.appendChild(b);
+        });
+        speedPanel.appendChild(row);
+        var custom = document.createElement('div');
+        custom.className = 'row';
+        speedInput = document.createElement('input');
+        speedInput.type = 'number';
+        speedInput.min = '0.25';
+        speedInput.max = '100';
+        speedInput.step = 'any';
+        speedInput.setAttribute('inputmode', 'decimal');
+        speedInput.setAttribute('aria-label', 'Custom speed multiplier');
+        var set = document.createElement('button');
+        set.type = 'button';
+        set.textContent = 'Set';
+        set.addEventListener('click', function () { setSpeed(speedInput.value); });
+        speedInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') { setSpeed(speedInput.value); } });
+        custom.appendChild(speedInput);
+        custom.appendChild(set);
+        speedPanel.appendChild(custom);
+        var note = document.createElement('p');
+        note.textContent = 'Speeds up the game clock (0.25\u2013100\u00d7). High values are limited by how fast your device can keep up, and the speed resets when the page reloads.';
+        speedPanel.appendChild(note);
+        document.body.appendChild(speedPanel);
+        var bar = document.getElementById('topBar');
+        speedPanel.style.top = (bar ? bar.getBoundingClientRect().bottom + 4 : 40) + 'px';
+        renderSpeed();
+    }
+
+    function onDocTap(e) {
+        // (ignore the click we send to the game's pause button ourselves: it is not a user tap)
+        if (e.isTrusted && speedPanel && !speedPanel.contains(e.target) && e.target !== speedBtn) { closeSpeedPanel(); }
+    }
+
+    function attachSpeedBtn() {
+        var bar = document.getElementById('topBar');
+        if (!bar) { return; }
+        if (!speedBtn) {
+            speedBtn = document.createElement('button');
+            speedBtn.type = 'button';
+            speedBtn.id = NS + '-speed';
+            speedBtn.title = 'Game speed';
+            speedBtn.addEventListener('click', function () { speedPanel ? closeSpeedPanel() : openSpeedPanel(); });
+            renderSpeed();
+        }
+        if (speedBtn.parentNode !== bar) { bar.appendChild(speedBtn); }
+    }
+
     var hintTimer;
 
     var api = window.__evm = {
@@ -339,7 +553,16 @@
             document.addEventListener('scroll', updateHints, true);
             document.addEventListener('click', onTabClick, true);
             window.addEventListener('resize', updateHints);
-            hintTimer = setInterval(function () { updateHints(); bindLog(); }, 750);
+            hintTimer = setInterval(function () { updateHints(); bindLog(); attachSpeedBtn(); }, 750);
+            document.addEventListener('mousemove', holdMult, false);
+            document.addEventListener('mousedown', holdMult, true);
+            document.addEventListener('click', holdMult, true);
+            document.addEventListener('click', afterTap, false);
+            document.addEventListener('click', onDocTap, true);
+            patchWorker(); // passive until a speed is chosen; starts measuring the game's tick length
+            attachSpeedBtn();
+            renderMult();
+            holdMult();
             document.addEventListener('click', muteOnLogControls, true);
             bindLog();
             updateHints();
@@ -353,6 +576,16 @@
             document.removeEventListener('click', onTabClick, true);
             window.removeEventListener('resize', updateHints);
             clearInterval(hintTimer);
+            fireKeys('keyup');
+            multIdx = 0;
+            document.removeEventListener('mousemove', holdMult, false);
+            document.removeEventListener('mousedown', holdMult, true);
+            document.removeEventListener('click', holdMult, true);
+            document.removeEventListener('click', afterTap, false);
+            document.removeEventListener('click', onDocTap, true);
+            closeSpeedPanel();
+            if (speed !== 1) { setSpeed(1); }
+            if (speedBtn) { speedBtn.remove(); }
             document.removeEventListener('click', muteOnLogControls, true);
             if (logObs) { logObs.disconnect(); }
             boundLog = null;
