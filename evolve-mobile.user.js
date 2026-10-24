@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Evolve Mobile UI
 // @namespace    https://github.com/AgentPurpleLord/Evolve-Bookmarklet
-// @version      1.0.0.8
+// @version      1.0.0.9
 // @description  Mobile-friendly layout for Evolve (Game / Resources / Log panels, scrollable tabs).
 // @match        https://pmotschmann.github.io/Evolve/*
 // @match        https://pmotschmann.github.io/Evolve
@@ -158,6 +158,11 @@
                 'html.evm #mainColumn .sub,html.evm #mainColumn .add{display:inline-flex;align-items:center;justify-content:center;min-width:2.5rem;min-height:2rem;padding:0 .5rem;vertical-align:middle;box-sizing:border-box}',
                 'html.evm #mainColumn .current{display:inline-block;min-height:2rem;line-height:2rem;vertical-align:middle}',
                 'html.evm #mainColumn .factory>div,html.evm #mainColumn .factory>span{margin-bottom:.2rem}',
+                /* Job rows (Government tab): label shrinks, the « » pair never wraps. */
+                'html.evm #mainColumn .job{min-width:0;margin-left:0;margin-bottom:.15rem}',
+                'html.evm #mainColumn .job .job_label{flex:1 1 auto;min-width:0}',
+                'html.evm #mainColumn .job .job_label>:first-child{width:auto!important;flex:1 1 6rem;min-width:0;overflow-wrap:anywhere}',
+                'html.evm #mainColumn .job .controls{display:flex;flex:none;flex-wrap:nowrap;margin:0 0 0 .5rem}',
 
                 /* Fuel / smelting controls are flat runs of  [«] name [»]  spans: keep each triple together, one per row. */
                 'html.evm #mainColumn .fuels{display:grid;grid-template-columns:2.75rem minmax(7rem,11rem) 2.75rem;justify-content:center;gap:.3rem 0;margin-top:.4rem}',
