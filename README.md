@@ -10,6 +10,10 @@ The desktop layout's three columns (resources + message log, game tabs, build qu
 
 New log messages also pop up briefly as toasts above the bottom bar (tap one to dismiss it; up to 3 at a time, none while the Log panel is open).
 
+**Step multiplier (right end of the bottom bar).** Tap to cycle ×1 → ×10 → ×25 → ×100. While it is highlighted, every « » stepper and build/craft button acts as if you were holding Ctrl (×10), Shift (×25) or Alt (×100) on a PC. It uses the game's default key bindings and its "multiplier keys" setting, and resets to ×1 when you reload.
+
+**Game speed (top right).** The ⏩ chip opens a popup with presets (×1 to ×100) and a custom field (0.25–100×) that speeds up the game's clock. The real limit is how fast your phone can run the game; the speed resets when the page reloads, and a speed picked while the game is paused applies when you resume.
+
 Tooltips and dialogs are constrained to the screen width. The game's own DOM is never moved, only restyled, so it keeps working normally.
 
 ## Install
