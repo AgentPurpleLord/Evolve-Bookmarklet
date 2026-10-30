@@ -8,7 +8,9 @@ The desktop layout's three columns (resources + message log, game tabs, build qu
 - **Resources**: the resource list at full width.
 - **Log**: message log and build queue, full height.
 
-New log messages also pop up briefly as toasts above the bottom bar (tap one to dismiss it; up to 3 at a time, none while the Log panel is open).
+New log messages appear in a slim strip at the top of the bottom bar (so nothing covers the game): several in a row play one after another, a long one wraps to two lines, tap the strip to open the Log, and nothing shows while the Log panel is open.
+
+**Visuals.** An animated 2D scene sits above the tabs on the Game panel: the sky follows a day/night cycle paced by the game's own day length (it pauses when the game is paused), the ground, foliage and sky follow the season and weather read from the game's top bar (rain, snow, wind, storms), and a little village grows as you build. New log messages set off sparks (a red flash for danger), and taps on game buttons ripple. Switch the scene and the effects off from the ⏩ popup (Visuals); they respect your device's reduced-motion setting and the scene only animates while the Game panel is open and the page is visible.
 
 **Step multiplier (right end of the bottom bar).** Tap to cycle ×1 → ×10 → ×25 → ×100. While it is highlighted, every « » stepper and build/craft button acts as if you were holding Ctrl (×10), Shift (×25) or Alt (×100) on a PC. It uses the game's default key bindings and its "multiplier keys" setting, and resets to ×1 when you reload.
 
